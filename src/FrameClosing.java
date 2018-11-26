@@ -17,12 +17,13 @@ public class FrameClosing extends JFrame {
         super("Заголовок окна");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setIconImage(getToolkit().getImage("icon.gif"));
-        setSize(400, 400);
+        setSize(500, 500);
 
-        JButton buttonl = new JButton( "Обычное окно" );
+        JButton buttonl = new JButton( "Добавить значение" );
         buttonl.addActionListener(e -> {
             try {
-                con.readDbUserTable();
+                MyConnection.readDbUserTable();
+                MyConnection.insertIntoDB("DN118899DAG2");
                 DefaultTableModel model = (DefaultTableModel) table.getModel();
                 model.addRow(new String[]{"DN118899DAG1"});
             } catch (SQLException e1) {
@@ -32,8 +33,37 @@ public class FrameClosing extends JFrame {
            // dialog.setVisible(true);
         });
 
+        JButton button2 = new JButton( "Удалить значение" );
+        button2.addActionListener(e -> {
+            // MyConnection.readDbUserTable();
+            MyConnection.deleteFromDB("DN118899DAG2");
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+           // model.addRow(new String[]{"DN118899DAG1"});
+           // System.out.println(model.getColumnName(1));
+
+            model.removeRow(1);
+            //JDialog dialog = createDialog("Немодальное", false);
+            // dialog.setVisible(true);
+        });
+
+        JButton button3 = new JButton( "J,yjdbnm" );
+        button3.addActionListener(e -> {
+            // MyConnection.readDbUserTable();
+            MyConnection.updateInDB();
+            System.out.println("Updaete");
+           // DefaultTableModel model = (DefaultTableModel) table.getModel();
+            // model.addRow(new String[]{"DN118899DAG1"});
+            // System.out.println(model.getColumnName(1));
+
+            //model.removeRow(1);
+            //JDialog dialog = createDialog("Немодальное", false);
+            // dialog.setVisible(true);
+        });
+
         JPanel contents = new JPanel();
         contents.add( buttonl );
+        contents.add( button2 );
+        contents.add( button3 );
         setContentPane( contents );
 
         //JTable table = new JTable(data2, columnNames2);
