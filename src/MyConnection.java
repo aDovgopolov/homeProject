@@ -43,6 +43,7 @@ public class MyConnection {
     public static synchronized void insertIntoDB(String ldap){
 
         Date date = new Date(0);
+        String st = "St";
         String selectTableSQL = "insert into test.rep_emp values('" + ldap + "', '', '', '', '" + date + "', '');";
         System.out.println(selectTableSQL);
         try {
