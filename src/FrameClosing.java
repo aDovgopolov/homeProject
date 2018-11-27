@@ -2,6 +2,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Date;
 
 public class FrameClosing extends JFrame {
 
@@ -23,7 +24,9 @@ public class FrameClosing extends JFrame {
         buttonl.addActionListener(e -> {
             try {
                 MyConnection.readDbUserTable();
-                MyConnection.insertIntoDB("DN118899DAG2");
+                String check = MyConnection.insertIntoDB("DN118899DAG2",
+                        "", "", "", new Date(0), "");
+                System.out.println(check);
                 DefaultTableModel model = (DefaultTableModel) table.getModel();
                 model.addRow(new String[]{"DN118899DAG1"});
             } catch (SQLException e1) {
@@ -46,7 +49,7 @@ public class FrameClosing extends JFrame {
             // dialog.setVisible(true);
         });
 
-        JButton button3 = new JButton( "J,yjdbnm" );
+        JButton button3 = new JButton( "Обновить" );
         button3.addActionListener(e -> {
             // MyConnection.readDbUserTable();
             MyConnection.updateInDB();

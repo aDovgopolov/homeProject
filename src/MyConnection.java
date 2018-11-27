@@ -40,11 +40,19 @@ public class MyConnection {
         }
     }
 
-    public static synchronized void insertIntoDB(String ldap){
+    public static synchronized String insertIntoDB(String ldap_login, String rep_fam,
+                                                   String rep_name, String rep_ot,
+                                                   Date rep_birth, String rep_posit){
+        if(checkLoginInDB(ldap_login)) return "Already exists";
 
-        Date date = new Date(0);
-        String st = "St";
-        String selectTableSQL = "insert into test.rep_emp values('" + ldap + "', '', '', '', '" + date + "', '');";
+        String selectTableSQL = "insert into test.rep_emp values('"
+                + ldap_login + "', '"
+                + rep_fam  + "', '"
+                + rep_name  + "', '"
+                + rep_ot  + "', '"
+                + rep_birth  + "', '"
+                + rep_posit  + "')";
+               // + "', '', '', '', '" + date + "', '');";
         System.out.println(selectTableSQL);
         try {
             //длина не может быть больше 12
@@ -52,7 +60,26 @@ public class MyConnection {
         } catch (SQLException e) {
             //log
             e.printStackTrace();
+            return "Error";
         }
+
+        return "Success";
+    }
+
+    private static boolean checkLoginInDB(String login){
+
+        try {
+            String selectTableSQL = "select ldap_login from test.rep_emp where ldap_login = '"
+                                    + login + "';";
+            ResultSet rs = statement.executeQuery(selectTableSQL);
+            System.out.println(selectTableSQL);
+
+            if(rs.next())                return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return false;
     }
 
     public static synchronized void deleteFromDB(String str){
