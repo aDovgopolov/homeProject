@@ -52,7 +52,7 @@ public class FrameClosing extends JFrame {
         JButton button3 = new JButton( "Обновить" );
         button3.addActionListener(e -> {
             // MyConnection.readDbUserTable();
-            MyConnection.updateInDB();
+            MyConnection.updateInDB("1", "2", "3");
             System.out.println("Updaete");
            // DefaultTableModel model = (DefaultTableModel) table.getModel();
             // model.addRow(new String[]{"DN118899DAG1"});
