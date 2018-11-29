@@ -1,7 +1,6 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.sql.Date;
 
 public class FrameClosing extends JFrame {
@@ -20,18 +19,19 @@ public class FrameClosing extends JFrame {
         setIconImage(getToolkit().getImage("icon.gif"));
         setSize(500, 500);
 
+
+
+
+
+
         JButton buttonl = new JButton( "Добавить значение" );
         buttonl.addActionListener(e -> {
-            try {
-                MyConnection.readDbUserTable();
-                String check = MyConnection.insertIntoDB("DN118899DAG2",
-                        "", "", "", new Date(0), "");
-                System.out.println(check);
-                DefaultTableModel model = (DefaultTableModel) table.getModel();
-                model.addRow(new String[]{"DN118899DAG1"});
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
+            MyConnection.readDb(table);
+            String check = MyConnection.insertIntoDB("DN118899DAG2",
+                    "", "", "", new Date(0), "");
+            System.out.println(check);
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+            model.addRow(new String[]{"DN118899DAG1"});
             //JDialog dialog = createDialog("Немодальное", false);
            // dialog.setVisible(true);
         });
@@ -70,9 +70,10 @@ public class FrameClosing extends JFrame {
         setContentPane( contents );
 
         //JTable table = new JTable(data2, columnNames2);
-        table = new JTable(new DefaultTableModel(data2, columnNames2));
+        table = new JTable(new DefaultTableModel(data2, columnNames));
         getContentPane().add(new JScrollPane(table));
 
+        MyConnection.readDb(table);
         setVisible(true);
     }
 
@@ -85,7 +86,7 @@ public class FrameClosing extends JFrame {
     }
 
 
-    String[] columnNames = {"First Name",
+    String[] columnNames = {"LDAP_LOGIN",
             "Last Name",
             "Sport",
             "# of Years",

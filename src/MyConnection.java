@@ -1,43 +1,97 @@
 import java.sql.*;
 import org.apache.log4j.Logger;
 
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 public class MyConnection {
 
     private static final Logger log = Logger.getLogger(MyConnection.class);
     static Connection conn = null;
-    static Statement statement = null;
+    //private static Statement statement = null;
 
     MyConnection(){
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test",
                     "root", "Buggati");
-            statement = conn.createStatement();
+           // statement = conn.createStatement();
         } catch (ClassNotFoundException | SQLException e) {
-            //log
-            //statement.close();
-            //conn.close();
             e.printStackTrace();
+            log.info("MyConnection error :" + e);
         }
     }
 
-    public static synchronized void readDbUserTable() throws SQLException {
+    public static synchronized Connection getInstance() {
+        if (conn == null){
+            try {
+                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test",
+                        "root", "Buggati");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return conn;
+    }
 
+    private static boolean checkLoginInDB(String login){
+        String selectTableSQL = "select distinct ldap_login from test.rep_emp where ldap_login = '"
+                + login + "';";
         try {
-           // Connection dbConnection = MyConnection.conn;
-           // Statement statement = dbConnection.createStatement();
 
-            String selectTableSQL = "select ldap_login from test.rep_emp";
-
+            Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(selectTableSQL);
 
-            while (rs.next()) {
-                String userid = rs.getString("LDAP_LOGIN");
+            if(rs.next())                return true;
 
-                System.out.println("userid : " + userid);
-            }
+            rs.close();
+            statement.close();
+
+            log.info("checkLoginSuccess, script : " + selectTableSQL + " , login = " + login);
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            log.info("checkLoginError, script : " + selectTableSQL);
+            e.printStackTrace();
+            return false;
+        }
+        return false;
+    }
+
+    public static synchronized void readDb(JTable table){
+        System.out.println("readDb");
+        String[] data2 = new String[6];
+        String selectTableSQL = "select * from test.rep_emp";
+
+        try {
+            Statement statement = conn.createStatement();
+            ResultSet rs;
+            rs = statement.executeQuery(selectTableSQL);
+
+           DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+            while (rs.next()) {
+               // String userid = rs.getString("LDAP_LOGIN");
+
+                String ldap_login = rs.getString("LDAP_LOGIN");
+                data2[0] = ldap_login;
+                String rep_fam = rs.getString("REP_FAM");
+                data2[1] = rep_fam;
+                String rep_name = rs.getString("REP_NAME");
+                data2[2] = rep_name;
+                String rep_ot = rs.getString("REP_OT");
+                data2[3] = rep_ot;
+                String rep_birth = rs.getString("REP_BIRTH");
+                data2[4] = rep_birth;
+                String rep_posit = rs.getString("REP_POSIT");
+                data2[5] = rep_posit;
+                System.out.println(rep_birth);
+
+                tableModel.addRow(data2);
+            }
+            tableModel.fireTableDataChanged();
+            //tableModel.fireTableDataChanged()
+            rs.close();
+            statement.close();
+        } catch (SQLException e) {
+            log.info("insertIntoDBError, script : " + selectTableSQL);
             e.printStackTrace();
         }
     }
@@ -45,7 +99,7 @@ public class MyConnection {
     public static synchronized String insertIntoDB(String ldap_login, String rep_fam,
                                                    String rep_name, String rep_ot,
                                                    Date rep_birth, String rep_posit){
-        log.info("Начало обработки строки");
+        log.info("Начало вставки данных");
         if(checkLoginInDB(ldap_login)) return "Already exists";
 
         if(ldap_login.length() > 12) return "Too long login";
@@ -59,47 +113,32 @@ public class MyConnection {
                 + rep_posit  + "')";
 
         try {
-            statement.executeUpdate(selectTableSQL);
+            PreparedStatement statement = conn.prepareStatement(selectTableSQL);
+            statement.execute();
+            statement.close();
         } catch (SQLException e) {
-            //log System.out.println(selectTableSQL);
-
-            log.info("Еррок");
+            log.info("insertIntoDBError, script : " + selectTableSQL);
             e.printStackTrace();
             return "Error";
         }
 
-        log.info("Начало обработки строки");
+        log.info("Вставка завершена");
         return "Success";
-    }
-
-    private static boolean checkLoginInDB(String login){
-
-        try {
-            String selectTableSQL = "select distinct ldap_login from test.rep_emp where ldap_login = '"
-                                    + login + "';";
-            ResultSet rs = statement.executeQuery(selectTableSQL);
-            System.out.println(selectTableSQL);
-
-            if(rs.next())                return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return false;
     }
 
     public static synchronized String deleteFromDB(String ldap_login){
 
         if(!checkLoginInDB(ldap_login)) return "Deleted";
 
-            String selectTableSQL = "delete from test.rep_emp"
-                   + " where test.rep_emp.LDAP_LOGIN = '" + ldap_login + "'";
-
+        String selectTableSQL = "delete from test.rep_emp"
+                + " where test.rep_emp.LDAP_LOGIN = '" + ldap_login + "'";
 
         try {
+            Statement statement = conn.createStatement();
             statement.execute(selectTableSQL);
+            statement.close();
         } catch (SQLException e) {
-            //log System.out.println(selectTableSQL);
+            log.info("deleteFromDB, script : " + selectTableSQL);
             e.printStackTrace();
             return "Error";
         }
@@ -118,42 +157,15 @@ public class MyConnection {
         + " where LDAP_LOGIN = '" + ldap_login + "'";
 
         try {
+            Statement statement = conn.createStatement();
             statement.execute(selectTableSQL);
+            statement.close();
         } catch (SQLException e) {
-            System.out.println(selectTableSQL);
+            log.info("deleteFromDB, script : " + selectTableSQL);
             e.printStackTrace();
             return "Error";
         }
         return "Success";
-    }
-
-    private static void createDbUserTable(Connection con) throws SQLException {
-        Connection dbConnection = con;
-        Statement statement = null;
-
-        String createTableSQL = "CREATE TABLE DBUSER("
-                + "USER_ID integer(5) NOT NULL, "
-                + "USERNAME VARCHAR(20) NOT NULL, "
-                + "CREATED_BY VARCHAR(20) NOT NULL, "
-                + "CREATED_DATE DATE NOT NULL, " + "PRIMARY KEY (USER_ID) "
-                + ")";
-
-        try {
-            statement = dbConnection.createStatement();
-
-            // выполнить SQL запрос
-            statement.execute(createTableSQL);
-            System.out.println("Table \"dbuser\" is created!");
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        } finally {
-            if (statement != null) {
-                statement.close();
-            }
-            if (dbConnection != null) {
-                dbConnection.close();
-            }
-        }
     }
 
 }
