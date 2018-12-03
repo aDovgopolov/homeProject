@@ -1,21 +1,16 @@
 import java.sql.*;
 import org.apache.log4j.Logger;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-
-public class MyConnection {
+public final class  MyConnection{
 
     private static final Logger log = Logger.getLogger(MyConnection.class);
-    static Connection conn = null;
-    //private static Statement statement = null;
-
+    private static Connection conn = null;
+    
     MyConnection(){
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test",
                     "root", "Buggati");
-           // statement = conn.createStatement();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
             log.info("MyConnection error :" + e);
@@ -28,13 +23,16 @@ public class MyConnection {
                 conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test",
                         "root", "Buggati");
             } catch (SQLException e) {
-                e.printStackTrace();
+                log.info("MyConnection error :" + e);
             }
         }
         return conn;
     }
 
     private static boolean checkLoginInDB(String login){
+
+        if(login == null) return false;
+
         String selectTableSQL = "select distinct ldap_login from test.rep_emp where ldap_login = '"
                 + login + "';";
         try {
@@ -56,44 +54,37 @@ public class MyConnection {
         return false;
     }
 
-    public static synchronized void readDb(JTable table){
-        System.out.println("readDb");
-        String[] data2 = new String[6];
+    public static synchronized String[][] readDb(){
+        String[][] data1 = null;
         String selectTableSQL = "select * from test.rep_emp";
 
         try {
             Statement statement = conn.createStatement();
-            ResultSet rs;
-            rs = statement.executeQuery(selectTableSQL);
+            ResultSet rs = statement.executeQuery(selectTableSQL);
 
-           DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+            rs.last();
+            int rowCount = rs.getRow();
+            data1 = new String[rowCount][6];
+            rs.beforeFirst();
+
+           int i = 0;
             while (rs.next()) {
-               // String userid = rs.getString("LDAP_LOGIN");
-
-                String ldap_login = rs.getString("LDAP_LOGIN");
-                data2[0] = ldap_login;
-                String rep_fam = rs.getString("REP_FAM");
-                data2[1] = rep_fam;
-                String rep_name = rs.getString("REP_NAME");
-                data2[2] = rep_name;
-                String rep_ot = rs.getString("REP_OT");
-                data2[3] = rep_ot;
-                String rep_birth = rs.getString("REP_BIRTH");
-                data2[4] = rep_birth;
-                String rep_posit = rs.getString("REP_POSIT");
-                data2[5] = rep_posit;
-                System.out.println(rep_birth);
-
-                tableModel.addRow(data2);
+                data1[i][0] = rs.getString("LDAP_LOGIN");
+                data1[i][1] = rs.getString("REP_FAM");
+                data1[i][2] = rs.getString("REP_NAME");
+                data1[i][3] = rs.getString("REP_OT");
+                data1[i][4] = rs.getString("REP_BIRTH");
+                data1[i][5] = rs.getString("REP_POSIT");
+                i++;
             }
-            tableModel.fireTableDataChanged();
-            //tableModel.fireTableDataChanged()
+
             rs.close();
             statement.close();
         } catch (SQLException e) {
             log.info("insertIntoDBError, script : " + selectTableSQL);
             e.printStackTrace();
         }
+        return data1;
     }
 
     public static synchronized String insertIntoDB(String ldap_login, String rep_fam,
@@ -167,5 +158,4 @@ public class MyConnection {
         }
         return "Success";
     }
-
 }
