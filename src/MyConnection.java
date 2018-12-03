@@ -6,7 +6,7 @@ public final class  MyConnection{
     private static final Logger log = Logger.getLogger(MyConnection.class);
     private static Connection conn = null;
     
-    MyConnection(){
+    private MyConnection(){
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test",
@@ -26,6 +26,7 @@ public final class  MyConnection{
                 log.info("MyConnection error :" + e);
             }
         }
+        System.out.println("CONN");
         return conn;
     }
 
@@ -40,7 +41,7 @@ public final class  MyConnection{
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(selectTableSQL);
 
-            if(rs.next())                return true;
+            if(rs.next()) return true;
 
             rs.close();
             statement.close();

@@ -1,5 +1,8 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Array;
 import java.sql.Connection;
 import java.sql.Date;
@@ -17,6 +20,24 @@ public class Frame extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setIconImage(getToolkit().getImage("icon.gif"));
         setSize(700, 500);
+
+
+        JDialog jDialog = createDialog("title", true);
+        jDialog.setBounds(100, 100, 500, 100);
+
+        JTextField jTextField = new JTextField("Check");
+        jTextField.setSize(100, 50);
+        JButton ok = new JButton("ok");
+        ok.addActionListener(event -> System.out.println(jTextField.getText()));
+        JPanel panel = new JPanel();
+        panel.add(jTextField);
+        panel.add(ok);
+        jDialog.add(panel, BorderLayout.SOUTH);
+        panel.setSize(260, 160);
+        jDialog.add(panel);
+        jDialog.setVisible(true);
+
+
 
         JButton button0 = new JButton( "Получить базу сотрудников" );
         button0.addActionListener(e -> {
@@ -73,7 +94,7 @@ public class Frame extends JFrame {
         getContentPane().add(jsp);
 
        // jsp.setVisible(false);
-        createDialog("title", false);
+
         setVisible(true);
     }
 
