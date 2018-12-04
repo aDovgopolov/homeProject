@@ -1,12 +1,10 @@
+package view;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.Array;
-import java.sql.Connection;
-import java.sql.Date;
-import java.util.ArrayList;
+import conn.MyConnection;
+
 
 public class Frame extends JFrame {
 
@@ -38,12 +36,11 @@ public class Frame extends JFrame {
         jDialog.setVisible(true);
 
 
-
         JButton button0 = new JButton( "Получить базу сотрудников" );
         button0.addActionListener(e -> {
             // if table is not empty - dont show new or recreaty data (must be clear data from DB)
             DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
-            String[][] str = MyConnection.readDb();
+            String[][] str = MyConnection.getInstance().readFromDb();
             for (String[] aStr : str) {
                 tableModel.addRow(aStr);
             }
@@ -52,10 +49,9 @@ public class Frame extends JFrame {
 
         JButton buttonl = new JButton( "Добавить значение" );
         buttonl.addActionListener(e -> {
-            MyConnection.readDb();
-            String check = MyConnection.insertIntoDB("DN118899DAG2",
-                    "", "", "", new Date(0), "");
-            System.out.println(check);
+           // MyConnection.readFromDb();
+            String check = null;//MyConnection.insertIntoDB("DN118899DAG2",
+                   // "", "", "", new Date(0), "");
             DefaultTableModel model = (DefaultTableModel) table.getModel();
             model.addRow(new String[]{"DN118899DAG1"});
             //JDialog dialog = createDialog("Немодальное", false);
@@ -64,8 +60,8 @@ public class Frame extends JFrame {
 
         JButton button2 = new JButton( "Удалить значение" );
         button2.addActionListener(e -> {
-            // MyConnection.readDbUserTable();
-            MyConnection.deleteFromDB("DN118899DAG2");
+            // conn.MyConnection.readDbUserTable();
+           // MyConnection.deleteFromDB("DN118899DAG2");
             DefaultTableModel model = (DefaultTableModel) table.getModel();
            // model.addRow(new String[]{"DN118899DAG1"});
            // System.out.println(model.getColumnName(1));
@@ -77,7 +73,7 @@ public class Frame extends JFrame {
 
         JButton button3 = new JButton( "Обновить" );
         button3.addActionListener(e -> {
-            MyConnection.updateInDB("1", "2", "3");
+            //MyConnection.updateInDB("1", "2", "3");
             System.out.println("Updaete");
         });
 
@@ -99,6 +95,7 @@ public class Frame extends JFrame {
     }
 
     private JDialog createDialog( String title, boolean modal ){
+
         JDialog dialog = new JDialog( this, title, modal );
         dialog.setDefaultCloseOperation( DISPOSE_ON_CLOSE );
         dialog.setSize( 200, 60 );

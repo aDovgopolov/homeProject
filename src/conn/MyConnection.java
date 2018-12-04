@@ -1,36 +1,41 @@
+package conn;
+
 import java.sql.*;
 import org.apache.log4j.Logger;
 
-public final class  MyConnection{
+public final class MyConnection implements iCRUD{
 
-    private static final Logger log = Logger.getLogger(MyConnection.class);
-    private static Connection conn = null;
-    
+    private static final Logger log = Logger.getLogger(Connection.class);
+    private static MyConnection conn = null;
+    private static Connection conect;
+
     private MyConnection(){
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test",
+            conect = DriverManager.getConnection("jdbc:mysql://localhost:3306/test",
                     "root", "Buggati");
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
-            log.info("MyConnection error :" + e);
+            log.error("conn.MyConnection error :" + e);
         }
     }
 
-    public static synchronized Connection getInstance() {
+    public static  Logger getLogger(){
+        return log;
+    }
+
+    public static  Connection getConnection(){
+        return conect;
+    }
+
+    public static synchronized MyConnection getInstance() {
         if (conn == null){
-            try {
-                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test",
-                        "root", "Buggati");
-            } catch (SQLException e) {
-                log.info("MyConnection error :" + e);
-            }
+            conn = new MyConnection();
         }
-        System.out.println("CONN");
         return conn;
     }
 
-    private static boolean checkLoginInDB(String login){
+    @Override
+    public boolean checkDataInDB(String login) {
 
         if(login == null) return false;
 
@@ -38,7 +43,7 @@ public final class  MyConnection{
                 + login + "';";
         try {
 
-            Statement statement = conn.createStatement();
+            Statement statement = conect.createStatement();
             ResultSet rs = statement.executeQuery(selectTableSQL);
 
             if(rs.next()) return true;
@@ -55,12 +60,13 @@ public final class  MyConnection{
         return false;
     }
 
-    public static synchronized String[][] readDb(){
+    @Override
+    public String[][] readFromDb() {
         String[][] data1 = null;
         String selectTableSQL = "select * from test.rep_emp";
 
         try {
-            Statement statement = conn.createStatement();
+            Statement statement = conect.createStatement();
             ResultSet rs = statement.executeQuery(selectTableSQL);
 
             rs.last();
@@ -68,7 +74,7 @@ public final class  MyConnection{
             data1 = new String[rowCount][6];
             rs.beforeFirst();
 
-           int i = 0;
+            int i = 0;
             while (rs.next()) {
                 data1[i][0] = rs.getString("LDAP_LOGIN");
                 data1[i][1] = rs.getString("REP_FAM");
@@ -88,45 +94,45 @@ public final class  MyConnection{
         return data1;
     }
 
-    public static synchronized String insertIntoDB(String ldap_login, String rep_fam,
-                                                   String rep_name, String rep_ot,
-                                                   Date rep_birth, String rep_posit){
-        log.info("Начало вставки данных");
-        if(checkLoginInDB(ldap_login)) return "Already exists";
+    @Override
+    public String insertIntoDB(String[] str) {
 
-        if(ldap_login.length() > 12) return "Too long login";
+        if(str == null) return "Empty data";
+
+        if(checkDataInDB(str[0])) return "Already exists";
+
+        if(str[0].length() > 12) return "Too long login";
 
         String selectTableSQL = "insert into test.rep_emp values('"
-                + ldap_login + "', '"
-                + rep_fam  + "', '"
-                + rep_name  + "', '"
-                + rep_ot  + "', '"
-                + rep_birth  + "', '"
-                + rep_posit  + "')";
+                + str[0] + "', '"
+                + str[1]  + "', '"
+                + str[2]  + "', '"
+                + str[3]  + "', '"
+                + str[4]  + "', '"
+                + str[5]  + "')";
 
         try {
-            PreparedStatement statement = conn.prepareStatement(selectTableSQL);
+            PreparedStatement statement = conect.prepareStatement(selectTableSQL);
             statement.execute();
             statement.close();
         } catch (SQLException e) {
             log.info("insertIntoDBError, script : " + selectTableSQL);
-            e.printStackTrace();
             return "Error";
         }
 
-        log.info("Вставка завершена");
         return "Success";
     }
 
-    public static synchronized String deleteFromDB(String ldap_login){
+    @Override
+    public String deleteFromDB(String ldap_login){
 
-        if(!checkLoginInDB(ldap_login)) return "Deleted";
+        if(!checkDataInDB(ldap_login)) return "Deleted";
 
         String selectTableSQL = "delete from test.rep_emp"
                 + " where test.rep_emp.LDAP_LOGIN = '" + ldap_login + "'";
 
         try {
-            Statement statement = conn.createStatement();
+            Statement statement = conect.createStatement();
             statement.execute(selectTableSQL);
             statement.close();
         } catch (SQLException e) {
@@ -138,25 +144,24 @@ public final class  MyConnection{
         return "Success";
     }
 
-    public static synchronized String updateInDB(String ldap_login,
-                                                 String attr_name,
-                                                 String attr_value){
+    @Override
+    public String updateInDB(String ldap_login,String attr_name, String attr_value){
 
-        if(!checkLoginInDB(ldap_login)) return "No such user";
+        if(!checkDataInDB(ldap_login)) return "No such user";
 
         String selectTableSQL = "update test.rep_emp"
         + " set test.rep_emp." + attr_name + " = '" + attr_value + "'"
         + " where LDAP_LOGIN = '" + ldap_login + "'";
 
         try {
-            Statement statement = conn.createStatement();
+            Statement statement = conect.createStatement();
             statement.execute(selectTableSQL);
             statement.close();
         } catch (SQLException e) {
             log.info("deleteFromDB, script : " + selectTableSQL);
-            e.printStackTrace();
             return "Error";
         }
         return "Success";
     }
+
 }
