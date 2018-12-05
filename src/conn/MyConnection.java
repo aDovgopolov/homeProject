@@ -3,11 +3,12 @@ package conn;
 import java.sql.*;
 import org.apache.log4j.Logger;
 
-public final class MyConnection implements iCRUD{
+public final class MyConnection implements ICRUD {
 
     private static final Logger log = Logger.getLogger(Connection.class);
     private static MyConnection conn = null;
     private static Connection conect;
+    private ICRUD icrud ;
 
     private MyConnection(){
         try {
@@ -62,6 +63,9 @@ public final class MyConnection implements iCRUD{
 
     @Override
     public String[][] readFromDb() {
+        icrud = FactoryCRUD.getInstance().factoryMethod("dep"); //getInstance().factoryMethod("create");
+        System.out.println(icrud instanceof CRUD_rep_dep);;
+
         String[][] data1 = null;
         String selectTableSQL = "select * from test.rep_emp";
 
