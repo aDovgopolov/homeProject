@@ -1,0 +1,36 @@
+2018-11-29 20:24:45 INFO  conn.MyConnection:48 - Начало обработки строки
+2018-11-29 20:24:46 INFO  conn.MyConnection:71 - Начало обработки строки
+2018-11-29 20:26:54 INFO  conn.MyConnection:48 - Начало обработки строки
+2018-11-29 21:24:48 INFO  conn.MyConnection:77 - Начало вставки данных
+2018-11-29 21:36:59 INFO  conn.MyConnection:87 - Начало вставки данных
+2018-11-29 21:37:13 INFO  conn.MyConnection:87 - Начало вставки данных
+2018-11-29 21:37:15 INFO  conn.MyConnection:87 - Начало вставки данных
+2018-11-29 21:37:32 INFO  conn.MyConnection:87 - Начало вставки данных
+2018-11-29 21:37:33 INFO  conn.MyConnection:87 - Начало вставки данных
+2018-11-29 21:37:33 INFO  conn.MyConnection:87 - Начало вставки данных
+2018-11-29 21:37:33 INFO  conn.MyConnection:87 - Начало вставки данных
+2018-11-29 21:45:29 INFO  conn.MyConnection:101 - Начало вставки данных
+2018-11-29 21:47:59 INFO  conn.MyConnection:50 - checkLoginSuccess, script : select distinct ldap_login from test.rep_emp where ldap_login = 'DN118899DAG2'; , login = DN118899DAG2
+2018-11-29 21:47:59 INFO  conn.MyConnection:50 - checkLoginSuccess, script : select distinct ldap_login from test.rep_emp where ldap_login = 'DN118899DAG2'; , login = DN118899DAG2
+2018-11-29 21:48:00 INFO  conn.MyConnection:50 - checkLoginSuccess, script : select distinct ldap_login from test.rep_emp where ldap_login = 'DN118899DAG2'; , login = DN118899DAG2
+2018-11-29 21:48:00 INFO  conn.MyConnection:50 - checkLoginSuccess, script : select distinct ldap_login from test.rep_emp where ldap_login = 'DN118899DAG2'; , login = DN118899DAG2
+2018-12-02 14:13:32 INFO  conn.MyConnection:19 - conn.MyConnection error :java.sql.SQLException: The server time zone value 'Ôèíëÿíäèÿ (çèìà)' is unrecognized or represents more than one time zone. You must configure either the server or JDBC driver (via the serverTimezone configuration property) to use a more specifc time zone value if you want to utilize time zone support.
+2018-12-02 14:16:03 INFO  conn.MyConnection:102 - Начало вставки данных
+2018-12-02 14:16:03 INFO  conn.MyConnection:51 - checkLoginSuccess, script : select distinct ldap_login from test.rep_emp where ldap_login = 'DN118899DAG2'; , login = DN118899DAG2
+2018-12-02 14:16:03 INFO  conn.MyConnection:125 - Вставка завершена
+2018-12-02 14:18:18 INFO  conn.MyConnection:103 - Начало вставки данных
+2018-12-02 14:18:19 INFO  conn.MyConnection:51 - checkLoginSuccess, script : select distinct ldap_login from test.rep_emp where ldap_login = 'DN118899DAG2'; , login = DN118899DAG2
+2018-12-02 14:18:20 INFO  conn.MyConnection:51 - checkLoginSuccess, script : select distinct ldap_login from test.rep_emp where ldap_login = 'DN118899DAG2'; , login = DN118899DAG2
+2018-12-02 14:18:20 INFO  conn.MyConnection:51 - checkLoginSuccess, script : select distinct ldap_login from test.rep_emp where ldap_login = 'DN118899DAG2'; , login = DN118899DAG2
+2018-12-02 14:18:20 INFO  conn.MyConnection:51 - checkLoginSuccess, script : select distinct ldap_login from test.rep_emp where ldap_login = '1'; , login = 1
+2018-12-02 14:18:21 INFO  conn.MyConnection:51 - checkLoginSuccess, script : select distinct ldap_login from test.rep_emp where ldap_login = 'DN118899DAG2'; , login = DN118899DAG2
+2018-12-02 14:18:21 INFO  conn.MyConnection:103 - Начало вставки данных
+2018-12-02 14:18:21 INFO  conn.MyConnection:51 - checkLoginSuccess, script : select distinct ldap_login from test.rep_emp where ldap_login = 'DN118899DAG2'; , login = DN118899DAG2
+2018-12-02 14:18:22 INFO  conn.MyConnection:126 - Вставка завершена
+2018-12-02 15:44:41 INFO  conn.MyConnection:53 - checkLoginSuccess, script : select distinct ldap_login from test.rep_emp where ldap_login = '1'; , login = 1
+2018-12-02 15:44:43 INFO  conn.MyConnection:99 - Начало вставки данных
+2018-12-02 15:44:43 INFO  conn.MyConnection:53 - checkLoginSuccess, script : select distinct ldap_login from test.rep_emp where ldap_login = 'DN118899DAG2'; , login = DN118899DAG2
+2018-12-02 15:44:43 INFO  conn.MyConnection:122 - Вставка завершена
+2018-12-03 21:36:50 INFO  conn.MyConnection:21 - conn.MyConnection error :com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
