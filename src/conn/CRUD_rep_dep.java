@@ -74,7 +74,7 @@ public class CRUD_rep_dep implements ICRUD {
         if(str[0].length() > 12) return "Too long DEP";
 
         if(checkDataInDB(str[0])) return "Already exists";
-        
+
         int rows = 0;
         String selectTableSQL = "insert into test.rep_dep values('"
                 + str[0] + "', '"
