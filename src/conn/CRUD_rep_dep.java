@@ -12,7 +12,7 @@ public class CRUD_rep_dep implements ICRUD {
 
         if(login == null) return false;
 
-        String selectTableSQL = "select distinct rep_dep from test.rep_dep where ldap_login = '"
+        String selectTableSQL = "select distinct rep_dep from test.rep_dep where rep_dep = '"
                 + login + "';";
         try {
 
@@ -34,9 +34,9 @@ public class CRUD_rep_dep implements ICRUD {
 
     @Override
     public String[][] readFromDb() {
+
         String[][] data1 = null;
-        System.out.println("Success in CRUD_rep_dep");
-        /*
+
         String selectTableSQL = "select * from test.rep_dep";
         try {
             Statement statement = MyConnection.getConnection().createStatement();
@@ -61,7 +61,8 @@ public class CRUD_rep_dep implements ICRUD {
         } catch (SQLException e) {
             MyConnection.getLogger().info("insertIntoDBError, script : " + selectTableSQL);
             e.printStackTrace();
-        }*/
+        }
+
         return data1;
     }
 
@@ -70,10 +71,11 @@ public class CRUD_rep_dep implements ICRUD {
 
         if(str == null) return "Empty data";
 
-        if(checkDataInDB(str[0])) return "Already exists";
-
         if(str[0].length() > 12) return "Too long DEP";
 
+        if(checkDataInDB(str[0])) return "Already exists";
+        
+        int rows = 0;
         String selectTableSQL = "insert into test.rep_dep values('"
                 + str[0] + "', '"
                 + str[1]  + "', '"
@@ -82,14 +84,14 @@ public class CRUD_rep_dep implements ICRUD {
 
         try {
             PreparedStatement statement = MyConnection.getConnection().prepareStatement(selectTableSQL);
-            statement.execute();
+            rows = statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {
             MyConnection.getLogger().info("insertIntoDBError, script : " + selectTableSQL);
             return "Error";
         }
 
-        return "Success";
+        return String.valueOf(rows);
     }
 
     @Override
@@ -97,12 +99,13 @@ public class CRUD_rep_dep implements ICRUD {
 
         if(!checkDataInDB(dep)) return "Deleted";
 
+        int rows = 0;
         String selectTableSQL = "delete from test.rep_dep"
                 + " where test.rep_dep.REP_DEP = '" + dep + "'";
 
         try {
             Statement statement = MyConnection.getConnection().createStatement();
-            statement.execute(selectTableSQL);
+            rows = statement.executeUpdate(selectTableSQL);
             statement.close();
         } catch (SQLException e) {
             MyConnection.getLogger().info("deleteFromDB, script : " + selectTableSQL);
@@ -110,7 +113,7 @@ public class CRUD_rep_dep implements ICRUD {
             return "Error";
         }
 
-        return "Success";
+        return String.valueOf(rows);
     }
 
     @Override
@@ -118,18 +121,20 @@ public class CRUD_rep_dep implements ICRUD {
 
         if(!checkDataInDB(dep)) return "No such dep";
 
+        int rows = 0;
         String selectTableSQL = "update test.rep_dep"
                 + " set test.rep_dep." + attr_name + " = '" + attr_value + "'"
                 + " where REP_DEP = '" + dep + "'";
 
         try {
             Statement statement = MyConnection.getConnection().createStatement();
-            statement.execute(selectTableSQL);
+            rows = statement.executeUpdate(selectTableSQL);
             statement.close();
         } catch (SQLException e) {
             MyConnection.getLogger().info("deleteFromDB, script : " + selectTableSQL);
             return "Error";
         }
-        return "Success";
+
+        return String.valueOf(rows);
     }
 }

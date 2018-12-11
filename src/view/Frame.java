@@ -3,6 +3,8 @@ package view;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.Date;
+
 import conn.MyConnection;
 
 
@@ -40,7 +42,14 @@ public class Frame extends JFrame {
         button0.addActionListener(e -> {
             // if table is not empty - dont show new or recreaty data (must be clear data from DB)
             DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
-            String[][] str = MyConnection.getInstance().readFromDb();
+            String[][] str = new String[0][];
+            try {
+                str = MyConnection.getInstance().getFactoryObj("emp").readFromDb();
+                System.out.println( MyConnection.getInstance().getFactoryObj("emp").insertIntoDB(new String[]{"DN118899DAG7",
+                                                                                                 "", "", "", "1983-09-17", ""}));
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
             for (String[] aStr : str) {
                 tableModel.addRow(aStr);
             }

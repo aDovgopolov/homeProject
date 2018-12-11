@@ -1,6 +1,5 @@
 package conn;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,7 +11,7 @@ public class CRUD_rep_posit implements ICRUD {
 
         if(posit == null) return false;
 
-        String selectTableSQL = "select distinct rep_posit from test.rep_emp_posit where posit = '"
+        String selectTableSQL = "select distinct rep_posit from test.rep_emp_posit where REP_POSIT = '"
                 + posit + "';";
         try {
 
@@ -34,7 +33,9 @@ public class CRUD_rep_posit implements ICRUD {
 
     @Override
     public String[][] readFromDb() {
+
         String[][] data1 = null;
+
         String selectTableSQL = "select * from test.rep_emp_posit";
         try {
             Statement statement = MyConnection.getConnection().createStatement();
@@ -66,24 +67,26 @@ public class CRUD_rep_posit implements ICRUD {
 
         if(str == null) return "Empty data";
 
+        if(str[0].length() > 6) return "Too long POSIT";
+
         if(checkDataInDB(str[0])) return "Already exists";
 
-        if(str[0].length() > 6) return "Too long POSIT";
+        int rows = 0;
 
         String selectTableSQL = "insert into test.rep_emp_posit values('"
                 + str[0] + "', '"
                 + str[1]  + "')";
 
         try {
-            PreparedStatement statement = MyConnection.getConnection().prepareStatement(selectTableSQL);
-            statement.execute();
+            Statement statement = MyConnection.getConnection().createStatement();//prepareStatement(selectTableSQL);
+            rows = statement.executeUpdate(selectTableSQL);
             statement.close();
         } catch (SQLException e) {
             MyConnection.getLogger().info("insertIntoDBError, script : " + selectTableSQL);
             return "Error";
         }
 
-        return "Success";
+        return String.valueOf(rows);
     }
 
     @Override
@@ -91,12 +94,13 @@ public class CRUD_rep_posit implements ICRUD {
 
         if(!checkDataInDB(posit)) return "Deleted";
 
+        int rows = 0;
         String selectTableSQL = "delete from test.rep_emp_posit"
                 + " where test.rep_dep.REP_POSIT = '" + posit + "'";
 
         try {
             Statement statement = MyConnection.getConnection().createStatement();
-            statement.execute(selectTableSQL);
+            rows = statement.executeUpdate(selectTableSQL);
             statement.close();
         } catch (SQLException e) {
             MyConnection.getLogger().info("deleteFromDB, script : " + selectTableSQL);
@@ -104,7 +108,7 @@ public class CRUD_rep_posit implements ICRUD {
             return "Error";
         }
 
-        return "Success";
+        return String.valueOf(rows);
     }
 
     @Override
@@ -112,19 +116,21 @@ public class CRUD_rep_posit implements ICRUD {
 
         if(!checkDataInDB(posit)) return "No such dep";
 
+        int rows = 0;
         String selectTableSQL = "update test.rep_emp_posit"
                 + " set test.rep_emp_posit." + attr_name + " = '" + attr_value + "'"
                 + " where posit = '" + posit + "'";
 
         try {
             Statement statement = MyConnection.getConnection().createStatement();
-            statement.execute(selectTableSQL);
+            rows = statement.executeUpdate(selectTableSQL);
             statement.close();
         } catch (SQLException e) {
             MyConnection.getLogger().info("deleteFromDB, script : " + selectTableSQL);
             return "Error";
         }
-        return "Success";
+
+        return String.valueOf(rows);
     }
 
 }

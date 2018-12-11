@@ -12,12 +12,12 @@ public class CRUD_rep_emp implements ICRUD {
 
         if(login == null) return false;
 
-        String selectTableSQL = "select distinct ldap_login from test.rep_emp where ldap_login = '"
-                + login + "';";
+        String sql = "select distinct ldap_login from test.rep_emp where ldap_login in (?)";
         try {
 
-            Statement statement = MyConnection.getConnection().createStatement();
-            ResultSet rs = statement.executeQuery(selectTableSQL);
+            PreparedStatement statement = MyConnection.getConnection().prepareStatement(sql);
+            statement.setString(1, login);
+            ResultSet rs = statement.executeQuery();
 
             if(rs.next()) return true;
 
@@ -25,7 +25,6 @@ public class CRUD_rep_emp implements ICRUD {
             statement.close();
 
         } catch (SQLException e) {
-            MyConnection.getLogger().info("checkLoginError, script : " + selectTableSQL);
             e.printStackTrace();
             return false;
         }
@@ -68,12 +67,13 @@ public class CRUD_rep_emp implements ICRUD {
 
     @Override
     public String insertIntoDB(String[] str) {
-
         if(str == null) return "Empty data";
+
+        if(str[0].length() > 12) return "Too long login";
 
         if(checkDataInDB(str[0])) return "Already exists";
 
-        if(str[0].length() > 12) return "Too long login";
+        int rows = 0;
 
         String selectTableSQL = "insert into test.rep_emp values('"
                 + str[0] + "', '"
@@ -81,31 +81,35 @@ public class CRUD_rep_emp implements ICRUD {
                 + str[2]  + "', '"
                 + str[3]  + "', '"
                 + str[4]  + "', '"
-                + str[5]  + "')";
+                + str[5]  + "');";
 
         try {
-            PreparedStatement statement = MyConnection.getConnection().prepareStatement(selectTableSQL);
-            statement.execute();
+            Statement statement = MyConnection.getConnection().createStatement();
+            rows = statement.executeUpdate(selectTableSQL);
             statement.close();
         } catch (SQLException e) {
-            MyConnection.getLogger().info("insertIntoDBError, script : " + selectTableSQL);
+            e.printStackTrace();
+            MyConnection.getLogger().info("insertIntoDBError, script : " + selectTableSQL + ", e = " + e);
             return "Error";
         }
 
-        return "Success";
+        return String.valueOf(rows);
     }
 
     @Override
     public String deleteFromDB(String ldap_login){
 
+
         if(!checkDataInDB(ldap_login)) return "Deleted";
+
+        int rows = 0;
 
         String selectTableSQL = "delete from test.rep_emp"
                 + " where test.rep_emp.LDAP_LOGIN = '" + ldap_login + "'";
 
         try {
             Statement statement = MyConnection.getConnection().createStatement();
-            statement.execute(selectTableSQL);
+            statement.executeUpdate(selectTableSQL);
             statement.close();
         } catch (SQLException e) {
             MyConnection.getLogger().info("deleteFromDB, script : " + selectTableSQL);
@@ -113,7 +117,7 @@ public class CRUD_rep_emp implements ICRUD {
             return "Error";
         }
 
-        return "Success";
+        return String.valueOf(rows);
     }
 
     @Override
@@ -121,19 +125,21 @@ public class CRUD_rep_emp implements ICRUD {
 
         if(!checkDataInDB(ldap_login)) return "No such user";
 
+        int rows = 0;
+
         String selectTableSQL = "update test.rep_emp"
                 + " set test.rep_emp." + attr_name + " = '" + attr_value + "'"
                 + " where LDAP_LOGIN = '" + ldap_login + "'";
 
         try {
             Statement statement = MyConnection.getConnection().createStatement();
-            statement.execute(selectTableSQL);
+            statement.executeUpdate(selectTableSQL);
             statement.close();
         } catch (SQLException e) {
             MyConnection.getLogger().info("deleteFromDB, script : " + selectTableSQL);
             return "Error";
         }
-        return "Success";
+        return String.valueOf(rows);
     }
 
 }

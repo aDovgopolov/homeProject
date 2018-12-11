@@ -34,3 +34,24 @@
 2018-12-03 21:36:50 INFO  conn.MyConnection:21 - conn.MyConnection error :com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
 
 The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+2018-12-11 20:29:22 ERROR Connection:20 - conn.MyConnection error :java.sql.SQLException: No timezone mapping entry for 'Europe'
+2018-12-11 20:31:49 ERROR Connection:20 - conn.MyConnection error :java.sql.SQLException: No timezone mapping entry for 'Europe'
+2018-12-11 20:34:23 ERROR Connection:21 - conn.MyConnection error :java.sql.SQLException: No timezone mapping entry for 'Europe'
+2018-12-11 21:53:28 INFO  Connection:31 - checkLoginError, script : select distinct ldap_login from test.rep_emp where ldap_login = 'DN118899DAG1';
+2018-12-11 21:55:06 INFO  Connection:31 - checkLoginError, script : select distinct ldap_login from test.rep_emp where ldap_login = 'DN118899DAG1';
+2018-12-11 21:56:24 INFO  Connection:31 - checkLoginError, script : select distinct ldap_login from test.rep_emp where ldap_login = 'DN118899DAG1';
+2018-12-11 21:57:20 INFO  Connection:32 - checkLoginError, script : select distinct ldap_login from test.rep_emp where ldap_login = 'DN118899DAG1';
+2018-12-11 21:58:24 INFO  Connection:32 - checkLoginError, script : select distinct ldap_login from test.rep_emp where ldap_login = 'DN118899DAG1';
+2018-12-11 21:58:49 INFO  Connection:32 - checkLoginError, script : select distinct ldap_login from test.rep_emp where ldap_login = 'DN118899DAG1';
+2018-12-11 21:59:43 INFO  Connection:32 - checkLoginError, script : select distinct ldap_login from test.rep_emp where ldap_login = 'DN118899DAG1';
+2018-12-11 22:00:32 INFO  Connection:32 - checkLoginError, script : select distinct ldap_login from test.rep_emp where ldap_login = 'DN118899DAG1';
+2018-12-11 22:09:11 INFO  Connection:96 - insertIntoDBError, script : insert into test.rep_emp values('DN118899DAG3', 'null', 'null', 'null', 'null', 'null')
+2018-12-11 22:10:13 INFO  Connection:96 - insertIntoDBError, script : insert into test.rep_emp values('DN118899DAG3', '', '', '', '', '')
+2018-12-11 22:11:03 INFO  Connection:96 - insertIntoDBError, script : insert into test.rep_emp values('DN118899DAG3', '', '', '', '', '');
+2018-12-11 22:13:13 INFO  Connection:96 - insertIntoDBError, script : insert into test.rep_emp values('DN118899DAG4', '', '', '', '', '');
+2018-12-11 22:14:56 INFO  Connection:97 - insertIntoDBError, script : insert into test.rep_emp values('DN118899DAG7', '', '', '', '', '');
+2018-12-11 22:18:37 INFO  Connection:97 - insertIntoDBError, script : insert into test.rep_emp values('DN118899DAG7', '', '', '', 'Thu Jan 01 02:00:00 EET 1970', '');, e = com.mysql.cj.jdbc.exceptions.MysqlDataTruncation: Data truncation: Incorrect date value: 'Thu Jan 01 02:00:00 EET 1970' for column 'REP_BIRTH' at row 1
+2018-12-11 22:20:52 INFO  Connection:97 - insertIntoDBError, script : insert into test.rep_emp values('DN118899DAG7', '', '', '', 'Thu Jan 01 02:00:00 EET 1970', '');, e = com.mysql.cj.jdbc.exceptions.MysqlDataTruncation: Data truncation: Incorrect date value: 'Thu Jan 01 02:00:00 EET 1970' for column 'REP_BIRTH' at row 1
+2018-12-11 22:20:52 INFO  Connection:97 - insertIntoDBError, script : insert into test.rep_emp values('DN118899DAG7', '', '', '', 'Thu Jan 01 02:00:00 EET 1970', '');, e = com.mysql.cj.jdbc.exceptions.MysqlDataTruncation: Data truncation: Incorrect date value: 'Thu Jan 01 02:00:00 EET 1970' for column 'REP_BIRTH' at row 1
+2018-12-11 22:20:53 INFO  Connection:97 - insertIntoDBError, script : insert into test.rep_emp values('DN118899DAG7', '', '', '', 'Thu Jan 01 02:00:00 EET 1970', '');, e = com.mysql.cj.jdbc.exceptions.MysqlDataTruncation: Data truncation: Incorrect date value: 'Thu Jan 01 02:00:00 EET 1970' for column 'REP_BIRTH' at row 1
+2018-12-11 22:21:15 INFO  Connection:97 - insertIntoDBError, script : insert into test.rep_emp values('DN118899DAG7', '', '', '', 'Tue Dec 11 22:21:15 EET 2018', '');, e = com.mysql.cj.jdbc.exceptions.MysqlDataTruncation: Data truncation: Incorrect date value: 'Tue Dec 11 22:21:15 EET 2018' for column 'REP_BIRTH' at row 1
