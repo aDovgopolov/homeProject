@@ -94,7 +94,7 @@ public class Frame extends JFrame {
     }
 
     void createFr(){
-        
+
         setSize(400, 300);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         Container с = getContentPane();
