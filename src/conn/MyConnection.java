@@ -12,12 +12,15 @@ public final class MyConnection{
     private static Connection conect;
     private ICRUD icrud ;
     private Map<String, ICRUD> hashMap = new HashMap<>();
+    private static  String _login = null;
+    private static  String _password = null;
 
     private MyConnection(){
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
+
             conect = DriverManager.getConnection("jdbc:mysql://localhost:3306/test",
-                    "root", "Buggati");
+                    _login, _password);
         } catch (ClassNotFoundException | SQLException e) {
             log.error("conn.MyConnection error :" + e);
             e.printStackTrace();
@@ -39,6 +42,10 @@ public final class MyConnection{
         return conn;
     }
 
+    public static void setEntryData(String login, String password){
+        _login = login;
+        _password = password;
+    }
     public ICRUD getFactoryObj(String str) throws Exception{
 
         switch (str) {

@@ -18,35 +18,17 @@ public class Frame extends JFrame {
 
         super("Заголовок окна");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setIconImage(getToolkit().getImage("icon.gif"));
         setSize(700, 500);
-
-
-        JDialog jDialog = createDialog("title", true);
-        jDialog.setBounds(100, 100, 500, 100);
-
-        JTextField jTextField = new JTextField("Check");
-        jTextField.setSize(100, 50);
-        JButton ok = new JButton("ok");
-        ok.addActionListener(event -> System.out.println(jTextField.getText()));
-        JPanel panel = new JPanel();
-        panel.add(jTextField);
-        panel.add(ok);
-        jDialog.add(panel, BorderLayout.SOUTH);
-        panel.setSize(260, 160);
-        jDialog.add(panel);
-        jDialog.setVisible(true);
-
 
         JButton button0 = new JButton( "Получить базу сотрудников" );
         button0.addActionListener(e -> {
-            // if table is not empty - dont show new or recreaty data (must be clear data from DB)
             DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
             String[][] str = new String[0][];
             try {
                 str = MyConnection.getInstance().getFactoryObj("emp").readFromDb();
-                System.out.println( MyConnection.getInstance().getFactoryObj("emp").insertIntoDB(new String[]{"DN118899DAG7",
-                                                                                                 "", "", "", "1983-09-17", ""}));
+
+                /*System.out.println( MyConnection.getInstance().getFactoryObj("emp").insertIntoDB(new String[]{"DN118899DAG7",
+                                                                                                 "", "", "", "1983-09-17", ""}));*/
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
@@ -111,4 +93,26 @@ public class Frame extends JFrame {
         return dialog;
     }
 
+    void createFr(){
+        
+        setSize(400, 300);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        Container с = getContentPane();
+
+        JPanel jp1 = new JPanel();
+        jp1.setBounds(0,0,400, 200);
+        jp1.setBackground(Color.RED);
+        с.add(jp1, BorderLayout.NORTH);
+
+// ... или константы из класса BorderLayout
+        JPanel jp2 = new JPanel();
+        jp2.setBackground(Color.BLUE);
+        с.add(jp2, BorderLayout.SOUTH);
+
+       /* JPanel jp3 = new JPanel();
+        jp3.setBackground(Color.ORANGE);
+        с.add(jp3, BorderLayout.CENTER);*/
+// выводим окно на экран
+        setVisible(true);
+    }
 }

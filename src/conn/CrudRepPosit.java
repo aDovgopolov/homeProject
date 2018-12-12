@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class CRUD_rep_posit implements ICRUD {
+public class CrudRepPosit implements ICRUD {
 
     @Override
     public boolean checkDataInDB(String posit) {

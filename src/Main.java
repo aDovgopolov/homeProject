@@ -1,10 +1,10 @@
-import view.Frame;
+import view.StartFrame;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        Frame frame = new Frame();
+        StartFrame frame = new StartFrame();
     }
 
 }

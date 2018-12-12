@@ -15,9 +15,9 @@ public class FactoryCRUD {
 
     public ICRUD factoryMethod(String cmd){
         switch (cmd) {
-            case "dep" :   return new CRUD_rep_dep();
-            case "emp" :   return new CRUD_rep_emp();
-            case "posit" :   return new CRUD_rep_posit();
+            case "dep" :   return new CrudRepDep();
+            case "emp" :   return new CrudRepEmp();
+            case "posit" :   return new CrudRepPosit();
             default: return null;
         }
     }
