@@ -1,7 +1,5 @@
 package view;
 
-import conn.MyConnection;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -15,7 +13,6 @@ public class StartFrame extends JFrame implements ActionListener {
     JPasswordField p1;
 
     public StartFrame() {
-        JFrame frame = new JFrame("Login Form");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         l1 = new JLabel("Login Form");
         l1.setForeground(Color.blue);
@@ -27,25 +24,28 @@ public class StartFrame extends JFrame implements ActionListener {
         p1 = new JPasswordField();
         btn1 = new JButton("Login");
 
-        btn1.addActionListener(e -> {
-            String uname = tf1.getText();
-            String pass = p1.getText();
-            if(uname.equals("root") && pass.equals("Buggati"))
-            {
-               /* MainPanel wel = new MainPanel();
-                wel.setVisible(true);
-                JLabel label = new JLabel("Welcome:"+uname);
-                wel.getContentPane().add(label);*/
-               frame.setVisible(false);
-                Frame frame1 = new Frame();
-                MyConnection.setEntryData(uname, pass);
-            }
-            else
-            {
-                JOptionPane.showMessageDialog(this,"Incorrect login or password",
-                        "Error",JOptionPane.ERROR_MESSAGE);
-            }
-        });
+
+        btn1.addActionListener(this);
+//        btn1.addActionListener(e -> {
+//            tf1.setText("root");p1.setText("Buggati");
+//            String uname = tf1.getText();
+//            String pass = p1.getText();
+//            if(uname.equals("root") && pass.equals("Buggati"))
+//            {
+//               /* MainPanel wel = new MainPanel();
+//                wel.setVisible(true);
+//                JLabel label = new JLabel("Welcome:"+uname);
+//                wel.getContentPane().add(label);*/
+//               frame.setVisible(false);
+//                MainPanel frame1 = new MainPanel();
+//                //MyConnection.setEntryData(uname, pass);
+//            }
+//            else
+//            {
+//                JOptionPane.showMessageDialog(this,"Incorrect login or password",
+//                        "Error",JOptionPane.ERROR_MESSAGE);
+//            }
+//        });
 
 
         l1.setBounds(100, 30, 400, 30);
@@ -55,29 +55,31 @@ public class StartFrame extends JFrame implements ActionListener {
         p1.setBounds(300, 110, 200, 30);
         btn1.setBounds(150, 160, 100, 30);
 
-        frame.add(l1);
-        frame.add(l2);
-        frame.add(tf1);
-        frame.add(l3);
-        frame.add(p1);
-        frame.add(btn1);
+        add(l1);
+        add(l2);
+        add(tf1);
+        add(l3);
+        add(p1);
+        add(btn1);
 
-        frame.setSize(600, 400);
-        frame.setLayout(null);
-        frame.setVisible(true);
+        setSize(600, 400);
+        setLayout(null);
+        setVisible(true);
     }
 
     public void actionPerformed(ActionEvent ae)
     {
+        tf1.setText("root");p1.setText("Buggati");
         System.out.println("SUC");
         String uname = tf1.getText();
         String pass = p1.getText();
         if(uname.equals("root") && pass.equals("Buggati"))
         {
+            this.setVisible(false);
             MainPanel wel = new MainPanel();
             wel.setVisible(true);
-            JLabel label = new JLabel("Welcome:"+uname);
-            wel.getContentPane().add(label);
+           // JLabel label = new JLabel(); // "Welcome:"+uname
+         //   wel.getContentPane().add(label);
         }
         else
         {
