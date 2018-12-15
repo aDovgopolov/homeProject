@@ -46,6 +46,7 @@ public final class MyConnection{
         _login = login;
         _password = password;
     }
+
     public ICRUD getFactoryObj(String str) throws Exception{
 
         switch (str) {

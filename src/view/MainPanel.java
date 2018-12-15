@@ -1,13 +1,15 @@
 package view;
 
+import controler.Controler;
+import controler.IControler;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class MainPanel extends JFrame implements ActionListener {
+public class MainPanel extends JFrame{
 
+    private IControler iControler;
     private JTable table = null;
     private JScrollPane jsp;
     private String[] columnNames = {"LDAP_LOGIN", "REP_FAM", "REP_NAME", "REP_OT", "REP_BIRTH", "REP_POSIT"};
@@ -17,12 +19,19 @@ public class MainPanel extends JFrame implements ActionListener {
     private JButton btnCreate;
     private JButton btnSearch;
     private JComboBox comboBox;
+    private DefaultTableModel tableModel;
 
-    String[] items = {
-            "CrudRepDep",
-            "CrudRepEmp",
-            "CrudRepPosit"
+//    String[] items = {
+//            "Табл. по сотрудникам",
+//            "Табл. по департаменту",
+//            "Табл. по должностям"
+//    };
+        String[] items = {
+            "dep",
+            "emp",
+            "posit"
     };
+
 
     MainPanel() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -32,6 +41,14 @@ public class MainPanel extends JFrame implements ActionListener {
         initButtonPanel();
         initTablePanel();
         initTableCheckbox();
+
+        iControler = new Controler(tableModel);
+        System.out.println(comboBox.getSelectedItem().toString());
+        btnRead.addActionListener(v->{iControler.read(comboBox.getSelectedItem().toString());});
+        btnUPD.addActionListener(v->{iControler.update();});
+        btnDelete.addActionListener(v->{iControler.delete();});
+        btnCreate.addActionListener(v->{iControler.create();});
+        btnSearch.addActionListener(v->{iControler.search();});
 
         setVisible(true);
     }
@@ -47,12 +64,6 @@ public class MainPanel extends JFrame implements ActionListener {
         btnDelete= new JButton("Удалить");
         btnSearch= new JButton("Поиск");
 
-        btnRead.addActionListener(this);
-        btnUPD.addActionListener(this);
-        btnCreate.addActionListener(this);
-        btnDelete.addActionListener(this);
-        btnSearch.addActionListener(this);
-
         grid.add( btnRead );
         grid.add( btnUPD );
         grid.add( btnCreate );
@@ -62,30 +73,19 @@ public class MainPanel extends JFrame implements ActionListener {
         getContentPane().add( grid , BorderLayout.NORTH);
     }
 
-    public void initTablePanel(){
-        table = new JTable(new DefaultTableModel(null,columnNames ));
+    private void initTablePanel(){
 
-        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
-        tableModel.addRow(new String[]{"DN118899DAG7","", "", "", "1983-09-17", ""});
-        tableModel.fireTableDataChanged();
+        table = new JTable(new DefaultTableModel(null,columnNames ));
+        tableModel = (DefaultTableModel) table.getModel();
         jsp = new JScrollPane(table);
         jsp.setBounds(100,100,50,50);
         getContentPane().add(jsp);
     }
 
-    public void initTableCheckbox() {
+    private void initTableCheckbox() {
         Font font = new Font("Verdana", Font.PLAIN, 18);
-
         Container content = getContentPane();
-
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
-
-        //final JLabel label = new JLabel(" ");
-        //label.setAlignmentX(LEFT_ALIGNMENT);
-       // label.setFont(font);
-       // content.add(label);
-
-
 
         comboBox = new JComboBox(items);
         comboBox.setFont(font);
@@ -94,29 +94,10 @@ public class MainPanel extends JFrame implements ActionListener {
         ActionListener actionListener = e -> {
             JComboBox box = (JComboBox)e.getSource();
             String item = (String)box.getSelectedItem();
-            // label.setText(item);
+            System.out.println(item);
         };
 
         comboBox.addActionListener(actionListener);
         content.add(comboBox);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
-        Object source = e.getSource();
-        if(source == btnRead)        {
-            System.out.println("btnRead");
-
-            System.out.println(comboBox.getSelectedItem());
-        }else if(source == btnUPD){
-            System.out.println("btnUPD");
-        }else if(source == btnCreate){
-            System.out.println("btnCreate");
-        }else if(source == btnDelete){
-            System.out.println("btnDelete");
-        }else if(source == btnSearch){
-            System.out.println("btnSearch");
-        }
     }
 }

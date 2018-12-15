@@ -4,7 +4,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.Date;
-
 import conn.MyConnection;
 
 
@@ -15,7 +14,6 @@ public class Frame extends JFrame {
     String[] columnNames = {"LDAP_LOGIN", "REP_FAM", "REP_NAME", "REP_OT", "REP_BIRTH", "REP_POSIT"};
 
     public Frame() {
-
         super("Заголовок окна");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(700, 500);

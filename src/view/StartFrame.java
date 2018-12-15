@@ -7,10 +7,10 @@ import java.awt.event.ActionListener;
 
 public class StartFrame extends JFrame implements ActionListener {
 
-    JLabel l1, l2, l3;
-    JTextField tf1;
-    JButton btn1;
-    JPasswordField p1;
+    private JLabel l1, l2, l3;
+    private JTextField tf1;
+    private JButton btn1;
+    private JPasswordField p1;
 
     public StartFrame() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -24,29 +24,7 @@ public class StartFrame extends JFrame implements ActionListener {
         p1 = new JPasswordField();
         btn1 = new JButton("Login");
 
-
         btn1.addActionListener(this);
-//        btn1.addActionListener(e -> {
-//            tf1.setText("root");p1.setText("Buggati");
-//            String uname = tf1.getText();
-//            String pass = p1.getText();
-//            if(uname.equals("root") && pass.equals("Buggati"))
-//            {
-//               /* MainPanel wel = new MainPanel();
-//                wel.setVisible(true);
-//                JLabel label = new JLabel("Welcome:"+uname);
-//                wel.getContentPane().add(label);*/
-//               frame.setVisible(false);
-//                MainPanel frame1 = new MainPanel();
-//                //MyConnection.setEntryData(uname, pass);
-//            }
-//            else
-//            {
-//                JOptionPane.showMessageDialog(this,"Incorrect login or password",
-//                        "Error",JOptionPane.ERROR_MESSAGE);
-//            }
-//        });
-
 
         l1.setBounds(100, 30, 400, 30);
         l2.setBounds(80, 70, 200, 30);
@@ -70,7 +48,6 @@ public class StartFrame extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent ae)
     {
         tf1.setText("root");p1.setText("Buggati");
-        System.out.println("SUC");
         String uname = tf1.getText();
         String pass = p1.getText();
         if(uname.equals("root") && pass.equals("Buggati"))
@@ -78,6 +55,12 @@ public class StartFrame extends JFrame implements ActionListener {
             this.setVisible(false);
             MainPanel wel = new MainPanel();
             wel.setVisible(true);
+
+            /* MainPanel wel = new MainPanel();
+//                wel.setVisible(true);
+//                JLabel label = new JLabel("Welcome:"+uname);
+//                wel.getContentPane().add(label);*/
+
            // JLabel label = new JLabel(); // "Welcome:"+uname
          //   wel.getContentPane().add(label);
         }
