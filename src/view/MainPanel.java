@@ -1,15 +1,24 @@
 package view;
 
-import controler.Controler;
+import controler.Controller;
 import controler.IControler;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import static javax.swing.JOptionPane.showMessageDialog;
 
 public class MainPanel extends JFrame{
 
@@ -23,11 +32,12 @@ public class MainPanel extends JFrame{
     private DefaultTableModel tableModel;
     private DefaultTableModel tableDepModel;
     private DefaultTableModel tablePositModel;
-    JComboBox<String> combo = new JComboBox<>(new String[] { "Менеджер", "Программист", "Водитель"});
-    private String item = "emp"; //default data
+    private String item = "emp";
     private final String[] items = {"emp", "dep", "posit"};
+    JComboBox<String> combo = new JComboBox<>(new String[] { "Manage", "Gamer", "Driver"});
 
-    SimpleTableDemo simpleTableDemo;
+    private TableRowSorter<DefaultTableModel> sorter;
+    private JTextField filterText;
 
     MainPanel() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -35,10 +45,10 @@ public class MainPanel extends JFrame{
         setSize(700, 400);
 
         initButtonPanel();
-        initTablePanel();
         initTableCheckbox();
-
-        iControler = new Controler(tableModel);
+        initTablePanel();
+        initFilterTextField();
+        iControler = new Controller(tableModel);
 
         setVisible(true);
     }
@@ -54,15 +64,11 @@ public class MainPanel extends JFrame{
         JButton btnDelete= new JButton("Удалить");
         JButton btnSearch= new JButton("Поиск");
 
-        btnRead.addActionListener(v-> new BtnReadListener().actionPerformed(v));
-        btnUPD.addActionListener(v-> {
-           // table.setModel(tableModel);
-            //iControler.update(tableModel, item);
-            tableModel.fireTableDataChanged();
-        });
-        btnDelete.addActionListener(v-> iControler.delete(tableModel, item));
-        btnCreate.addActionListener(v-> iControler.create());
-        btnSearch.addActionListener(v-> iControler.search());
+        btnRead.addActionListener(  v-> new BtnReadListener().actionPerformed(v));
+        btnDelete.addActionListener(v-> new BtnDeleteListener().actionPerformed(v));
+        btnUPD.addActionListener(   v-> new BtnUpdateListener().actionPerformed(v));
+        btnCreate.addActionListener(v-> new BtnCreateListener().actionPerformed(v));
+        btnSearch.addActionListener(v-> new BtnSearchListener().actionPerformed(v));
 
         grid.add( btnRead );
         grid.add( btnUPD );
@@ -79,11 +85,9 @@ public class MainPanel extends JFrame{
         tablePositModel = new DefaultTableModel(null, positColumnNames );
 
         table = new JTable();
+        table.setDefaultEditor(Object.class, null);
         jsp = new JScrollPane(table);
         jsp.setBounds(100,100,50,50);
-
-        simpleTableDemo = new SimpleTableDemo();
-        table.getModel().addTableModelListener(e -> System.out.println("HERE!!!!!!!!!!!!!!!!!!!"));
 
         getContentPane().add(jsp);
     }
@@ -106,123 +110,284 @@ public class MainPanel extends JFrame{
         content.add(comboBox);
     }
 
+    private void initFilterTextField() {
+
+        Container content = getContentPane();
+        //this time just for emp table
+        sorter = new TableRowSorter<>(tableModel);
+        table.setRowSorter(sorter);
+
+        JLabel l1 = new JLabel("Filter Text:", SwingConstants.TRAILING);
+        filterText = new JTextField();
+
+        Font font = new Font("Verdana", Font.PLAIN, 18);
+        filterText.setFont(font);
+        filterText.setAlignmentX(LEFT_ALIGNMENT);
+
+        filterText.getDocument().addDocumentListener(
+                new DocumentListener() {
+                    public void changedUpdate(DocumentEvent e) {
+                        newFilter();
+                    }
+                    public void insertUpdate(DocumentEvent e) {
+                        newFilter();
+                    }
+                    public void removeUpdate(DocumentEvent e) {
+                        newFilter();
+                    }
+                });
+
+        content.add(l1);
+        content.add(filterText);
+
+    }
+
+    private void newFilter() {
+        System.out.println("Filter");
+        RowFilter<DefaultTableModel, Object> rf = null;
+        try {
+            rf = RowFilter.regexFilter(filterText.getText(), 0);
+        } catch (java.util.regex.PatternSyntaxException e) {
+            return;
+        }
+        sorter.setRowFilter(rf);
+    }
+
     public class BtnReadListener implements ActionListener{
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            setDefaultTableModel();
+            iControler.read((DefaultTableModel) table.getModel(), item);
+        }
+    }
+
+    public class BtnDeleteListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String str = "";
+            int idx = table.getSelectedRow();
+
+            if(idx == -1) {
+                JOptionPane.showMessageDialog(table, "Выберите записи для удаления");
+            }else{
+                if(comboBox.getSelectedItem().toString().equals("dep")){
+                    str = (String) table.getModel().getValueAt(idx,1);
+                }else{
+                    str = (String) table.getModel().getValueAt(idx,0);
+                }
+                int reply = JOptionPane.showConfirmDialog(table, "Удалить из базы " + str);
+
+                if(reply == 0) iControler.delete((DefaultTableModel) table.getModel(), item, str, idx);
+            }
+        }
+    }
+
+    public class BtnUpdateListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            DefaultTableModel tableModel1 = checkDefaultTableModel();
+            JTable table1 = new JTable(tableModel1);
+
+            if(table.getSelectedRow() == -1){
+                JOptionPane.showMessageDialog(table, "Выберите запись для обновления");
+            }else{
+                tableModel1.addRow((Object[]) null);
+                for(int i = tableModel1.getColumnCount() - 1; i >= 0; i--){
+                    tableModel1.setValueAt(table.getModel().
+                            getValueAt(table.getSelectedRow(), i),0,i);
+                }
+
+                setEditors(table1);
+                JScrollPane jsp =  new JScrollPane(table1);
+                jsp.setBounds(100,100,0,0);
+                jsp.setPreferredSize(new Dimension(700,100));
+
+                ArrayList<String> arr = new ArrayList<>();
+                for (int j = 0; j < table.getModel().getColumnCount(); j++){
+                    arr.add((String) table.getModel().getValueAt(table.getSelectedRow(),j));
+                }
+
+                int reply = JOptionPane.showConfirmDialog(table,jsp, "Обновить данные", JOptionPane.YES_NO_OPTION);
+
+                System.out.println("Updated " + updateRowValues(tableModel1, arr) + " values of the row");
+
+                if(reply == 0){
+
+                    for(int i = tableModel1.getColumnCount() - 1; i >= 0; i--){
+                        table.getModel().setValueAt(tableModel1.
+                                getValueAt(0, i),table.getSelectedRow() ,i);
+                    }
+                }
+            }
+        }
+
+        private int updateRowValues(DefaultTableModel tableModel1, ArrayList arr) {
+            int i = 0;
+
+            for (int k = 0; k < tableModel1.getColumnCount(); k++) {
+                if (arr.get(k).equals(tableModel1.getValueAt(0, k))) {
+                    System.out.println(arr.get(k));
+                    System.out.println("index" + k + " is not updated");
+                } else {
+                    String data = comboBox.getSelectedItem().toString().equals("dep") ?
+                            String.valueOf(tableModel1.getValueAt(0, 1)) :
+                            String.valueOf(tableModel1.getValueAt(0, 0));
+                    System.out.println("index" + k + " is Updated and new value = " + tableModel1.getValueAt(0, k)
+                                       + ", columnName = " + tableModel1.getColumnName(k));
+                    i++;
+
+                    iControler.update(tableModel1, comboBox.getSelectedItem().toString(),
+                            data,
+                            tableModel1.getColumnName(k),
+                            String.valueOf(tableModel1.getValueAt(0, k)));
+                }
+            }
+
+            return i;
+        }
+
+        private void setEditors(JTable table1){
             switch (comboBox.getSelectedItem().toString()) {
                 case "emp":
-                    table.setModel(tableModel);
-                    iControler.read(tableModel, item);
+                    DefaultCellEditor editor = new DefaultCellEditor(combo);
+                    table1.getColumnModel().getColumn(0).setCellEditor(null);
+                    table1.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new JTextField()));
+                    table1.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(new JTextField()));
+                    table1.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(new JTextField()));
+                    table1.getColumnModel().getColumn(4).setCellEditor(new DefaultCellEditor(new JTextField()));
+                    table1.getColumnModel().getColumn(5).setCellEditor(editor);
                     break;
                 case "dep":
-                    table.setModel(tableDepModel);
-                    iControler.read(tableDepModel, item);
+                    table1.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new JTextField()));
+                    table1.getColumnModel().getColumn(1).setCellEditor(null);
+                    table1.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(new JTextField()));
+                    table1.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(new JTextField()));
                     break;
                 default:
-                    table.setModel(tablePositModel);
-                    iControler.read(tablePositModel, item);
+                    table1.getColumnModel().getColumn(0).setCellEditor(null);
+                    table1.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new JTextField()));
                     break;
             }
         }
     }
 
-    public void changeTableColums(String str){
-
-        TableColumnModel tt =  table.getColumnModel();
-        while( tt.getColumnCount() > 0 ) {
-            tt.removeColumn( tt.getColumn(0) );
-        }
-
-       // tableModel.fireTableDataChanged();
-        //System.out.println(tableModel.getColumnCount());
-        tableModel.addColumn("STR");
-
-
-      /*  for(int i = 0 ; i < depColumnNames.length;i++){
-
-            tableModel.addColumn(depColumnNames[i]);
-        }*/
-
-        //        JTableHeader th = table.getTableHeader();
-//        TableColumnModel tcm = th.getColumnModel();
-//        TableColumn tc = tcm.getColumn(0);
-//        tc.setHeaderValue( "???" );
-//        th.repaint();
-
-
-
-/*
-        TableColumnModel cm = getColumnModel();
-        while( cm.getColumnCount() > 0 ) {
-            cm.removeColumn( cm.getColumn(0) );
-        }
-
-        // Create new columns from the data model info
-        for( int i=0; i<m.getColumnCount(); i++ ) {
-            TableColumn newColumn = new MyTableColumn(i);
-            if( i == TaskListModel.COL_LOCATION )
-                newColumn.setCellRenderer( new LeftDotRenderer() );
-            else if( i != TaskListModel.COL_GROUP )
-                newColumn.setCellRenderer( new TooltipRenderer() );
-            addColumn(newColumn);
-        }
-        */
-
-       /* DefaultCellEditor editor = new DefaultCellEditor(combo);
-        table.getColumnModel().getColumn(1).setCellEditor(editor);*/
-
-        /*
-        switch (str){
-            case "posit" :
-                System.out.println("Table change posit");
-                table = new JTable(new DefaultTableModel(null,positColumnNames ));  //
-                tableModel = (DefaultTableModel) table.getModel();
-                break;
-            case "dep" :
-                System.out.println("Table change dep");
-                table.clearSelection();
-                table = new JTable(new DefaultTableModel(null,depColumnNames ));  //
-                tableModel = (DefaultTableModel) table.getModel();
-                System.out.println(tableModel.getColumnCount());
-                jsp = new JScrollPane(table);
-                jsp.setBounds(100,100,50,50);
-                getContentPane().add(jsp);
-                break;
-            default:
-                table = new JTable(new DefaultTableModel(null,empColumnNames ));  //
-                tableModel = (DefaultTableModel) table.getModel();
-                //tableModel.set
-                tableModel.addColumn("Column #" + "5");
-                table.setModel(tableModel);
-
-                tableModel.fireTableDataChanged();
-                /*
-                TableColumnModel columnModel = table.getColumnModel();
-                int cnt = tableModel.getColumnCount();
-                columnModel.addColumn(new TableColumn(6));
-                System.out.println(columnModel.getColumnCount() );
-
-        */
-
-
-    }
-
-    public class SimpleTableDemo  implements TableModelListener {
-
-        public SimpleTableDemo() {
-            table.getModel().addTableModelListener(this);
-
-        }
+    public class BtnCreateListener implements ActionListener{
 
         @Override
-        public void tableChanged(TableModelEvent e) {
-            int row = e.getFirstRow();
-            int column = e.getColumn();
-            DefaultTableModel model = (DefaultTableModel)e.getSource();
-            String columnName = model.getColumnName(column);
-            Object data = model.getValueAt(row, column);
-            System.out.println("HERE");
+        public void actionPerformed(ActionEvent e) {
+
+            DefaultTableModel tableModel1 = checkDefaultTableModel();
+            JTable table1 = new JTable(tableModel1);
+            tableModel1.addRow((Object[]) null);
+
+            table1.setDefaultEditor(Date.class, new DateCellEditor());
+            setEditors(table1);
+            JScrollPane jsp = new JScrollPane(table1);
+            jsp.setBounds(100, 100, 0, 0);
+            jsp.setPreferredSize(new Dimension(700, 100));
+
+            int reply = JOptionPane.showConfirmDialog(table, jsp, "Добавить строку", JOptionPane.YES_NO_OPTION);
+
+            String[] data1 = new String[tableModel1.getColumnCount()];
+            if (reply == 0) {
+                for (int i = 0; i < tableModel1.getColumnCount(); i++) {
+                    data1[i] = String.valueOf(tableModel1.getValueAt(0, i));
+                }
+                iControler.create(comboBox.getSelectedItem().toString(), data1);
+                DefaultTableModel tt = (DefaultTableModel) table.getModel();
+                tt.addRow(data1);
+                tt.fireTableDataChanged();
+            }
+        }
+
+        private void setEditors(JTable table1){
+            switch (comboBox.getSelectedItem().toString()) {
+                case "emp":
+                    DefaultCellEditor editor = new DefaultCellEditor(combo);
+                    table1.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new JTextField()));
+                    table1.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new JTextField()));
+                    table1.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(new JTextField()));
+                    table1.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(new JTextField()));
+                    //index 4 = Date TODO
+                    table1.getColumnModel().getColumn(5).setCellEditor(editor);
+                    break;
+                case "dep":
+                    table1.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new JTextField()));
+                    table1.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new JTextField()));
+                    table1.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(new JTextField()));
+                    table1.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(new JTextField()));
+                    break;
+                default:
+                    table1.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new JTextField()));
+                    table1.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new JTextField()));
+                    break;
+            }
+        }
+
+    }
+
+    public class BtnSearchListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            //TODO
+            //iControler.search();
         }
     }
+
+    private DefaultTableModel checkDefaultTableModel(){
+        DefaultTableModel tt;
+        switch (comboBox.getSelectedItem().toString()) {
+            case "emp":
+                tt = new DefaultTableModel(null,empColumnNames );
+                break;
+            case "dep":
+                tt = new DefaultTableModel(null,depColumnNames );
+                break;
+            default:
+                tt = new DefaultTableModel(null,positColumnNames );
+                break;
+        }
+        return tt;
+    }
+
+    private void setDefaultTableModel(){
+
+        switch (comboBox.getSelectedItem().toString()) {
+            case "emp":
+                table.setModel(tableModel);
+                break;
+            case "dep":
+                table.setModel(tableDepModel);
+                break;
+            default:
+                table.setModel(tablePositModel);
+                break;
+        }
+    }
+
+    class DateCellEditor extends AbstractCellEditor implements TableCellEditor{
+
+        private JSpinner editor;
+
+        DateCellEditor() {
+            SpinnerDateModel model = new SpinnerDateModel(new Date(), null, null, Calendar.DAY_OF_MONTH);
+            editor = new JSpinner(model);
+        }
+
+        public Component getTableCellEditorComponent(JTable table, Object value,
+                                                     boolean isSelected, int row, int column) {
+            editor.setValue(value);
+            return editor;
+        }
+
+        public Object getCellEditorValue() {
+            return editor.getValue();
+        }
+    }
+
 }

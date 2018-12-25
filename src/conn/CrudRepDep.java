@@ -12,8 +12,9 @@ public class CrudRepDep implements ICRUD {
 
         if(login == null) return false;
 
-        String selectTableSQL = "select distinct rep_dep from test.rep_dep where rep_dep = '"
+        String selectTableSQL = "select distinct rep_dep from test.rep_dep where rep_dep_code = '"
                 + login + "';";
+
         try {
 
             Statement statement = MyConnection.getConnection().createStatement();
@@ -25,7 +26,7 @@ public class CrudRepDep implements ICRUD {
             statement.close();
 
         } catch (SQLException e) {
-            MyConnection.getLogger().info("checkLoginError, script : " + selectTableSQL);
+            MyConnection.getLogger().info("checkLoginError, script : " + selectTableSQL  + " , error = " + e);
             e.printStackTrace();
             return false;
         }
@@ -71,7 +72,7 @@ public class CrudRepDep implements ICRUD {
 
         if(str == null) return "Empty data";
 
-        if(str[0].length() > 12) return "Too long DEP";
+        if(str[1].length() > 12) return "Too long DEP";
 
         if(checkDataInDB(str[0])) return "Already exists";
 
@@ -87,7 +88,7 @@ public class CrudRepDep implements ICRUD {
             rows = statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {
-            MyConnection.getLogger().info("insertIntoDBError, script : " + selectTableSQL);
+            MyConnection.getLogger().info("insertIntoDBError, script : " + selectTableSQL  + " , error = " + e);
             return "Error";
         }
 
@@ -96,19 +97,18 @@ public class CrudRepDep implements ICRUD {
 
     @Override
     public String deleteFromDB(String dep){
-
         if(!checkDataInDB(dep)) return "Deleted";
 
         int rows = 0;
         String selectTableSQL = "delete from test.rep_dep"
-                + " where test.rep_dep.REP_DEP = '" + dep + "'";
+                + " where test.rep_dep.REP_DEP_CODE = '" + dep + "'";
 
         try {
             Statement statement = MyConnection.getConnection().createStatement();
             rows = statement.executeUpdate(selectTableSQL);
             statement.close();
         } catch (SQLException e) {
-            MyConnection.getLogger().info("deleteFromDB, script : " + selectTableSQL);
+            MyConnection.getLogger().info("deleteFromDB, script : " + selectTableSQL  + " , error = " + e);
             e.printStackTrace();
             return "Error";
         }
@@ -124,14 +124,14 @@ public class CrudRepDep implements ICRUD {
         int rows = 0;
         String selectTableSQL = "update test.rep_dep"
                 + " set test.rep_dep." + attr_name + " = '" + attr_value + "'"
-                + " where REP_DEP = '" + dep + "'";
+                + " where REP_DEP_CODE = '" + dep + "'";
 
         try {
             Statement statement = MyConnection.getConnection().createStatement();
             rows = statement.executeUpdate(selectTableSQL);
             statement.close();
         } catch (SQLException e) {
-            MyConnection.getLogger().info("deleteFromDB, script : " + selectTableSQL);
+            MyConnection.getLogger().info("deleteFromDB, script : " + selectTableSQL + " , error = " + e);
             return "Error";
         }
 

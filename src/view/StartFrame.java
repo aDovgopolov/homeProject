@@ -47,7 +47,7 @@ public class StartFrame extends JFrame implements ActionListener {
 
     public void actionPerformed(ActionEvent ae)
     {
-        tf1.setText("root");p1.setText("Buggati");
+        //tf1.setText("root");p1.setText("Buggati");
         String uname = tf1.getText();
         String pass = p1.getText();
         if(uname.equals("root") && pass.equals("Buggati"))
@@ -55,14 +55,6 @@ public class StartFrame extends JFrame implements ActionListener {
             this.setVisible(false);
             MainPanel wel = new MainPanel();
             wel.setVisible(true);
-
-            /* MainPanel wel = new MainPanel();
-//                wel.setVisible(true);
-//                JLabel label = new JLabel("Welcome:"+uname);
-//                wel.getContentPane().add(label);*/
-
-           // JLabel label = new JLabel(); // "Welcome:"+uname
-         //   wel.getContentPane().add(label);
         }
         else
         {

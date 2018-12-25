@@ -24,7 +24,7 @@ public class CrudRepPosit implements ICRUD {
             statement.close();
 
         } catch (SQLException e) {
-            MyConnection.getLogger().info("checkLoginError, script : " + selectTableSQL);
+            MyConnection.getLogger().info("checkLoginError, script : " + selectTableSQL  + " , error = " + e);
             e.printStackTrace();
             return false;
         }
@@ -56,7 +56,7 @@ public class CrudRepPosit implements ICRUD {
             rs.close();
             statement.close();
         } catch (SQLException e) {
-            MyConnection.getLogger().info("insertIntoDBError, script : " + selectTableSQL);
+            MyConnection.getLogger().info("insertIntoDBError, script : " + selectTableSQL  + " , error = " + e);
             e.printStackTrace();
         }
         return data1;
@@ -82,7 +82,7 @@ public class CrudRepPosit implements ICRUD {
             rows = statement.executeUpdate(selectTableSQL);
             statement.close();
         } catch (SQLException e) {
-            MyConnection.getLogger().info("insertIntoDBError, script : " + selectTableSQL);
+            MyConnection.getLogger().info("insertIntoDBError, script : " + selectTableSQL  + " , error = " + e);
             return "Error";
         }
 
@@ -103,7 +103,7 @@ public class CrudRepPosit implements ICRUD {
             rows = statement.executeUpdate(selectTableSQL);
             statement.close();
         } catch (SQLException e) {
-            MyConnection.getLogger().info("deleteFromDB, script : " + selectTableSQL);
+            MyConnection.getLogger().info("deleteFromDB, script : " + selectTableSQL  + " , error = " + e);
             e.printStackTrace();
             return "Error";
         }
@@ -119,14 +119,13 @@ public class CrudRepPosit implements ICRUD {
         int rows = 0;
         String selectTableSQL = "update test.rep_emp_posit"
                 + " set test.rep_emp_posit." + attr_name + " = '" + attr_value + "'"
-                + " where posit = '" + posit + "'";
-
+                + " where REP_POSIT = '" + posit + "'";
         try {
             Statement statement = MyConnection.getConnection().createStatement();
             rows = statement.executeUpdate(selectTableSQL);
             statement.close();
         } catch (SQLException e) {
-            MyConnection.getLogger().info("deleteFromDB, script : " + selectTableSQL);
+            MyConnection.getLogger().info("deleteFromDB, script : " + selectTableSQL  + " , error = " + e);
             return "Error";
         }
 

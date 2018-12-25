@@ -6,7 +6,7 @@ import java.awt.*;
 import java.util.Date;
 import conn.MyConnection;
 
-
+// Dont use
 public class Frame extends JFrame {
 
     JTable table = null;

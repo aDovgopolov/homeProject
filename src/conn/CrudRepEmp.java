@@ -25,6 +25,7 @@ public class CrudRepEmp implements ICRUD {
             statement.close();
 
         } catch (SQLException e) {
+            MyConnection.getLogger().info("checkDataInDBerror, script : " + sql  + " , error = " + e);
             e.printStackTrace();
             return false;
         }
@@ -59,7 +60,7 @@ public class CrudRepEmp implements ICRUD {
             rs.close();
             statement.close();
         } catch (SQLException e) {
-            MyConnection.getLogger().info("insertIntoDBError, script : " + selectTableSQL);
+            MyConnection.getLogger().info("insertIntoDBError, script : " + selectTableSQL  + " , error = " + e);
             e.printStackTrace();
         }
         return data1;
@@ -109,10 +110,10 @@ public class CrudRepEmp implements ICRUD {
 
         try {
             Statement statement = MyConnection.getConnection().createStatement();
-            statement.executeUpdate(selectTableSQL);
+            rows = statement.executeUpdate(selectTableSQL);
             statement.close();
         } catch (SQLException e) {
-            MyConnection.getLogger().info("deleteFromDB, script : " + selectTableSQL);
+            MyConnection.getLogger().info("deleteFromDB, script : " + selectTableSQL  + " , error = " + e);
             e.printStackTrace();
             return "Error";
         }
@@ -126,17 +127,16 @@ public class CrudRepEmp implements ICRUD {
         if(!checkDataInDB(ldap_login)) return "No such user";
 
         int rows = 0;
-
         String selectTableSQL = "update test.rep_emp"
                 + " set test.rep_emp." + attr_name + " = '" + attr_value + "'"
                 + " where LDAP_LOGIN = '" + ldap_login + "'";
 
         try {
             Statement statement = MyConnection.getConnection().createStatement();
-            statement.executeUpdate(selectTableSQL);
+            rows = statement.executeUpdate(selectTableSQL);
             statement.close();
         } catch (SQLException e) {
-            MyConnection.getLogger().info("deleteFromDB, script : " + selectTableSQL);
+            MyConnection.getLogger().info("updateInDB, script : " + selectTableSQL + " , error = " + e);
             return "Error";
         }
         return String.valueOf(rows);
